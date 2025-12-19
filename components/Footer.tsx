@@ -24,7 +24,7 @@ export default function Footer() {
 
           <div className="text-black font-black text-lg flex items-center gap-2">
 
-            x402 powered by zama fhe
+            Zama-X402
 
           </div>
 
