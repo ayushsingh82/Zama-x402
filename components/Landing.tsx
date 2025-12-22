@@ -98,23 +98,13 @@ export default function Landing() {
 
             <div className="mb-4">
 
-              <p className="text-sm font-black text-white bg-black px-3 py-2 rounded-lg inline-block">Developer Guardrails for x402</p>
+              <p className="text-sm font-black text-black bg-[#FBBF24] px-3 py-2 rounded-lg inline-block">Developer Guardrails for x402</p>
 
             </div>
 
-            <div className="mb-4">
+            <div className="mb-6">
 
-              <h2 className="text-5xl font-black text-[#FBBF24] bg-white px-3 py-2 rounded-lg inline-block italic">x402 powered by zama fhe</h2>
-
-            </div>
-
-            <div>
-
-              <p className="text-2xl font-black text-black max-w-2xl mx-auto">
-
-                Define spend limits, rate limits, and usage quotas on x402 calls. Prevent abuse and overuse with powerful guardrails.
-
-              </p>
+              <h2 className="text-5xl font-black text-black bg-white px-3 py-2 rounded-lg inline-block italic">X402 powered by zama fhe</h2>
 
             </div>
 
@@ -126,19 +116,14 @@ export default function Landing() {
 
       <div className="text-center mb-6 flex flex-col md:flex-row items-center justify-center gap-6">
 
-      <Link href="/invoices">
+      <Link href="/">
 
-          <button className="bg-[#FBBF24] border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-8 py-4 rounded-lg text-lg font-bold text-black hover:bg-[#FCD34D] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px]">View Dashboard</button>
+          <button className="bg-[#FBBF24] border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-8 py-4 rounded-lg text-lg font-bold text-black hover:bg-[#FCD34D] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px]">Start Testing </button>
 
         </Link>
 
         
 
-          <Link href="/upload">
-
-            <button className="bg-[#FCD34D] border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-8 py-4 rounded-lg text-lg font-bold text-black hover:bg-[#FDE68A] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px]">Configure Limits</button>
-
-          </Link>
 
         </div>
 

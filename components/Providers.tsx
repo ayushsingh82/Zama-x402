@@ -11,7 +11,7 @@ import { WagmiProvider } from 'wagmi';
 
 import {
   sepolia,
-
+ hardhat
 } from 'wagmi/chains';
 
 import {
@@ -24,7 +24,7 @@ import { ReactNode } from 'react';
 const config = getDefaultConfig({
   appName: 'x402',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
-  chains: [sepolia],
+  chains: [sepolia , hardhat],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
