@@ -3,10 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { formatUnits, parseUnits } from 'viem';
-import { relayer } from '@zama-fhe/relayer-sdk';
-
 const TOKEN_ADDRESS = (process.env.NEXT_PUBLIC_TOKEN_ADDRESS || '0x803d7ADD44B238F40106B1C4439ecAcd05910dc7') as `0x${string}`;
-const RELAYER_URL = process.env.NEXT_PUBLIC_RELAYER_URL || 'https://relayer.sepolia.zama.ai';
 
 // ERC7984 ABI (simplified)
 const ERC7984_ABI = [
@@ -78,18 +75,19 @@ export function useERC7984Wagmi({ instance }: UseERC7984WagmiProps = {}) {
 
     try {
       setError(null);
-      const relayerInstance = relayer(RELAYER_URL);
       
-      // Decrypt using relayer
-      const decrypted = await relayerInstance.decrypt(
-        TOKEN_ADDRESS,
-        handle,
-        address
-      );
-
-      if (decrypted) {
-        setClear(BigInt(decrypted));
-        setIsDecrypted(true);
+      // Decrypt using FHEVM instance
+      if (instance && typeof instance.decrypt === 'function') {
+        const decrypted = await instance.decrypt(handle, TOKEN_ADDRESS);
+        
+        if (decrypted && typeof decrypted === 'bigint') {
+          setClear(decrypted);
+          setIsDecrypted(true);
+        } else if (decrypted && typeof decrypted === 'object' && TOKEN_ADDRESS in decrypted) {
+          const value = decrypted[TOKEN_ADDRESS];
+          setClear(BigInt(value));
+          setIsDecrypted(true);
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Decryption failed'));
@@ -106,26 +104,29 @@ export function useERC7984Wagmi({ instance }: UseERC7984WagmiProps = {}) {
 
       try {
         setError(null);
-        const relayerInstance = relayer(RELAYER_URL);
 
-        // Encrypt amount
-        const encrypted = await relayerInstance.encrypt(
-          TOKEN_ADDRESS,
-          amount.toString(),
-          address
-        );
+        // Encrypt amount using FHEVM instance
+        if (instance && typeof instance.encrypt === 'function') {
+          const encrypted = await instance.encrypt(amount, TOKEN_ADDRESS);
 
-        if (!encrypted) {
-          throw new Error('Encryption failed');
+          if (!encrypted || !encrypted.handle) {
+            throw new Error('Encryption failed');
+          }
+
+          // Write contract
+          writeContract({
+            address: TOKEN_ADDRESS,
+            abi: ERC7984_ABI,
+            functionName: 'confidentialTransfer',
+            args: [
+              to, 
+              encrypted.handle as `0x${string}`, 
+              encrypted.proof || '0x' as `0x${string}`
+            ],
+          });
+        } else {
+          throw new Error('FHEVM instance not properly initialized');
         }
-
-        // Write contract
-        writeContract({
-          address: TOKEN_ADDRESS,
-          abi: ERC7984_ABI,
-          functionName: 'confidentialTransfer',
-          args: [to, encrypted.handle as `0x${string}`, encrypted.proof as `0x${string}`],
-        });
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Transfer failed'));
         throw err;

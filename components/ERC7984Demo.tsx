@@ -5,10 +5,17 @@ import { useAccount, useChainId } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useERC7984Wagmi } from '@/hooks/erc7984/useERC7984Wagmi';
 import { useX402Payment } from '@/hooks/x402/useX402Payment';
-import { relayer } from '@zama-fhe/relayer-sdk';
+// Using CDN bundle - loaded via script tag in layout
+declare global {
+  interface Window {
+    relayerSDK?: {
+      initSDK: (config?: any) => Promise<void>;
+      createInstance: (config: any) => Promise<any>;
+      SepoliaConfig: any;
+    };
+  }
+}
 import type { FHEPaymentRequirement } from '@/lib/x402-fhe/types';
-
-const RELAYER_URL = process.env.NEXT_PUBLIC_RELAYER_URL || 'https://relayer.sepolia.zama.ai';
 
 export default function ERC7984Demo() {
   const { address, isConnected } = useAccount();
@@ -16,17 +23,54 @@ export default function ERC7984Demo() {
   const [fhevmInstance, setFhevmInstance] = useState<any>(null);
   const [decryptionSig, setDecryptionSig] = useState<any>(null);
   const [paymentResult, setPaymentResult] = useState<any>(null);
+  const [isInitializing, setIsInitializing] = useState(false);
   
   const tokenHook = useERC7984Wagmi({ instance: fhevmInstance });
   const paymentHook = useX402Payment({ instance: fhevmInstance });
 
   // Initialize FHEVM instance
   useEffect(() => {
-    if (isConnected && address) {
-      const relayerInstance = relayer(RELAYER_URL);
-      setFhevmInstance(relayerInstance);
+    if (!isConnected || !address || fhevmInstance || isInitializing) {
+      return;
     }
-  }, [isConnected, address]);
+
+    const initializeFHEVM = async () => {
+      try {
+        setIsInitializing(true);
+        
+        // Wait for relayerSDK to be available from CDN
+        if (typeof window === 'undefined' || !window.relayerSDK) {
+          console.warn('Relayer SDK not loaded yet, waiting...');
+          setIsInitializing(false);
+          return;
+        }
+
+        const { initSDK, createInstance, SepoliaConfig } = window.relayerSDK;
+        
+        // Initialize SDK first (load WASM)
+        await initSDK();
+        
+        // Create instance with Sepolia config
+        const config = {
+          ...SepoliaConfig,
+          network: typeof window !== 'undefined' && window.ethereum ? window.ethereum : undefined,
+        };
+        const instance = await createInstance(config);
+        setFhevmInstance(instance);
+      } catch (error) {
+        console.error('Failed to initialize FHEVM:', error);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    // Small delay to ensure script is loaded
+    const timer = setTimeout(() => {
+      initializeFHEVM();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [isConnected, address, fhevmInstance, isInitializing]);
 
   // Create decryption signature
   const createDecryptionSignature = async () => {
@@ -122,6 +166,24 @@ export default function ERC7984Demo() {
               Connect your wallet to start testing
             </p>
             <ConnectButton />
+          </div>
+        ) : isInitializing ? (
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
+            <p className="text-lg font-semibold text-black">
+              Initializing FHEVM SDK...
+            </p>
+          </div>
+        ) : !fhevmInstance ? (
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
+            <p className="text-lg font-semibold text-red-600 mb-4">
+              FHEVM SDK failed to initialize. Please refresh the page.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-6 py-3 rounded-lg text-base font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+            >
+              Refresh Page
+            </button>
           </div>
         ) : (
           <div className="space-y-6">
