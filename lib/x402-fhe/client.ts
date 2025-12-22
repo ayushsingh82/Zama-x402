@@ -75,18 +75,23 @@ export async function fetchWithPayment(
   url: string,
   options: RequestInit = {}
 ): Promise<{ requiresPayment: boolean; requirement?: FHEPaymentRequirement; response?: Response }> {
-  const response = await fetch(url, options);
+  try {
+    const response = await fetch(url, options);
 
-  if (response.status === 402) {
-    const requirement = await parse402Response(response);
+    if (response.status === 402) {
+      const requirement = await parse402Response(response);
+      return {
+        requiresPayment: true,
+        requirement: requirement || undefined,
+      };
+    }
+
     return {
-      requiresPayment: true,
-      requirement: requirement || undefined,
+      requiresPayment: false,
+      response,
     };
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
   }
-
-  return {
-    requiresPayment: false,
-    response,
-  };
 }

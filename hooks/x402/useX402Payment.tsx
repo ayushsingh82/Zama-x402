@@ -7,7 +7,7 @@ import type {
   FHEPaymentPayload,
   PaymentState,
 } from '@/lib/x402-fhe/types';
-import { verifyPayment, fetchWithPayment } from '@/lib/x402-fhe/client';
+import { verifyPayment, fetchWithPayment as fetchWithPaymentUtil } from '@/lib/x402-fhe/client';
 
 interface UseX402PaymentProps {
   instance?: any; // FHEVM instance
@@ -44,7 +44,7 @@ export function useX402Payment({ instance }: UseX402PaymentProps = {}) {
         setError(null);
 
         // Initial fetch
-        const { requiresPayment, requirement: req, response } = await fetchWithPayment(url);
+        const { requiresPayment, requirement: req, response } = await fetchWithPaymentUtil(url);
 
         if (!requiresPayment && response) {
           const data = await response.json();
@@ -118,14 +118,14 @@ export function useX402Payment({ instance }: UseX402PaymentProps = {}) {
 
         // Retry the original request with payment proof
         setState('requesting');
-        const { response } = await fetchWithPayment(resourceUrl, {
+        const fetchResponse = await fetch(resourceUrl, {
           headers: {
             'X-Payment-TxHash': txHash,
           },
         });
 
-        if (response) {
-          const data = await response.json();
+        if (fetchResponse.ok) {
+          const data = await fetchResponse.json();
           setState('success');
           return { success: true, data };
         }

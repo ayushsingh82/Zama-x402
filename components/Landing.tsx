@@ -116,7 +116,7 @@ export default function Landing() {
 
       <div className="text-center mb-6 flex flex-col md:flex-row items-center justify-center gap-6">
 
-      <Link href="/">
+      <Link href="/test">
 
           <button className="bg-[#FBBF24] border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-8 py-4 rounded-lg text-lg font-bold text-black hover:bg-[#FCD34D] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px]">Start Testing </button>
 
