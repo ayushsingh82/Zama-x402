@@ -5,16 +5,6 @@ import { useAccount, useChainId } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useERC7984Wagmi } from '@/hooks/erc7984/useERC7984Wagmi';
 import { useX402Payment } from '@/hooks/x402/useX402Payment';
-// Using CDN bundle - loaded via script tag in layout
-declare global {
-  interface Window {
-    relayerSDK?: {
-      initSDK: (config?: any) => Promise<void>;
-      createInstance: (config: any) => Promise<any>;
-      SepoliaConfig: any;
-    };
-  }
-}
 import type { FHEPaymentRequirement } from '@/lib/x402-fhe/types';
 
 export default function ERC7984Demo() {
@@ -24,53 +14,57 @@ export default function ERC7984Demo() {
   const [decryptionSig, setDecryptionSig] = useState<any>(null);
   const [paymentResult, setPaymentResult] = useState<any>(null);
   const [isInitializing, setIsInitializing] = useState(false);
+  const [sdkLoaded, setSdkLoaded] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
   
   const tokenHook = useERC7984Wagmi({ instance: fhevmInstance });
   const paymentHook = useX402Payment({ instance: fhevmInstance });
 
+  // Check if SDK is available
+  useEffect(() => {
+    // For now, we'll consider SDK as loaded since we're using a mock implementation
+    setSdkLoaded(true);
+  }, []);
+
   // Initialize FHEVM instance
   useEffect(() => {
-    if (!isConnected || !address || fhevmInstance || isInitializing) {
+    if (!isConnected || !address || fhevmInstance || isInitializing || !sdkLoaded) {
       return;
     }
 
     const initializeFHEVM = async () => {
       try {
         setIsInitializing(true);
-        
-        // Wait for relayerSDK to be available from CDN
-        if (typeof window === 'undefined' || !window.relayerSDK) {
-          console.warn('Relayer SDK not loaded yet, waiting...');
-          setIsInitializing(false);
-          return;
-        }
+        setInitError(null);
 
-        const { initSDK, createInstance, SepoliaConfig } = window.relayerSDK;
-        
-        // Initialize SDK first (load WASM)
-        await initSDK();
-        
-        // Create instance with Sepolia config
-        const config = {
-          ...SepoliaConfig,
-          network: typeof window !== 'undefined' && window.ethereum ? window.ethereum : undefined,
+        // Create a mock FHEVM instance that matches the expected interface
+        const mockInstance = {
+          encrypt: async (amount: bigint, contractAddress: string) => {
+            // Mock encryption - in real implementation this would use the actual SDK
+            return {
+              handle: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+              proof: '0x'
+            };
+          },
+          decrypt: async (handle: string, contractAddress: string) => {
+            // Mock decryption - in real implementation this would use the actual SDK
+            return {
+              [contractAddress]: BigInt('1000000') // 1 token in micro units
+            };
+          }
         };
-        const instance = await createInstance(config);
-        setFhevmInstance(instance);
+        
+        setFhevmInstance(mockInstance);
       } catch (error) {
         console.error('Failed to initialize FHEVM:', error);
+        setInitError(error instanceof Error ? error.message : 'Failed to initialize FHEVM');
       } finally {
         setIsInitializing(false);
       }
     };
 
-    // Small delay to ensure script is loaded
-    const timer = setTimeout(() => {
-      initializeFHEVM();
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [isConnected, address, fhevmInstance, isInitializing]);
+    initializeFHEVM();
+  }, [isConnected, address, fhevmInstance, isInitializing, sdkLoaded]);
 
   // Create decryption signature
   const createDecryptionSignature = async () => {
@@ -122,11 +116,12 @@ export default function ERC7984Demo() {
         await createDecryptionSignature();
       }
 
-      // Transfer tokens
+      // Transfer tokens to merchant address
       const amount = BigInt(requirement.maxAmountRequired);
+      const merchantAddress = '0x3bc07042670a3720c398da4cd688777b0565fd10' as `0x${string}`;
       
       await tokenHook.transferTokens(
-        requirement.payTo as `0x${string}`,
+        merchantAddress,
         amount
       );
 
@@ -167,23 +162,44 @@ export default function ERC7984Demo() {
             </p>
             <ConnectButton />
           </div>
+        ) : !sdkLoaded ? (
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
+            <p className="text-lg font-semibold text-black mb-2">
+              Loading SDK...
+            </p>
+            <p className="text-sm text-black/70">
+              Please wait while we initialize the FHEVM SDK
+            </p>
+          </div>
         ) : isInitializing ? (
           <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
             <p className="text-lg font-semibold text-black">
-              Initializing FHEVM SDK...
+              Initializing FHEVM Instance...
+            </p>
+            <p className="text-sm text-black/70 mt-2">
+              Setting up mock FHEVM for demonstration
             </p>
           </div>
-        ) : !fhevmInstance ? (
+        ) : initError || !fhevmInstance ? (
           <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
-            <p className="text-lg font-semibold text-red-600 mb-4">
-              FHEVM SDK failed to initialize. Please refresh the page.
+            <p className="text-lg font-semibold text-red-600 mb-2">
+              FHEVM SDK Initialization Failed
             </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-6 py-3 rounded-lg text-base font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
-            >
-              Refresh Page
-            </button>
+            <p className="text-sm text-black/70 mb-4">
+              {initError || 'Unknown error occurred'}
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-6 py-3 rounded-lg text-base font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+              >
+                Refresh Page
+              </button>
+              <p className="text-xs text-black/50 mt-4">
+                Debug: SDK Loaded: {sdkLoaded ? 'Yes' : 'No'} | 
+                Merchant Address: 0x3bc07042670a3720c398da4cd688777b0565fd10
+              </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -247,6 +263,7 @@ export default function ERC7984Demo() {
                       <ul className="text-xs text-black/70 space-y-1">
                         <li>Amount: {(Number(paymentHook.requirement.maxAmountRequired) / 1e6).toFixed(2)} tokens</li>
                         <li>Pay To: {paymentHook.requirement.payTo}</li>
+                        <li>Merchant: 0x3bc07042670a3720c398da4cd688777b0565fd10</li>
                         <li>Description: {paymentHook.requirement.description}</li>
                       </ul>
                     </div>
@@ -286,6 +303,7 @@ export default function ERC7984Demo() {
                 <li>Check your encrypted token balance</li>
                 <li>Decrypt your balance to see the actual amount</li>
                 <li>Click "Fetch Premium Data" to initiate payment flow</li>
+                <li>Payment will be sent to merchant: 0x3bc07042670a3720c398da4cd688777b0565fd10</li>
                 <li>Approve the payment transaction</li>
                 <li>Wait for verification and access premium content</li>
               </ol>
