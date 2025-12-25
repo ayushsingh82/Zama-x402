@@ -52,7 +52,7 @@ export default function Landing() {
 
   return (
 
-    <div className="min-h-screen bg-white font-sans tracking-tight relative overflow-x-hidden">
+    <div className="font-sans tracking-tight relative overflow-x-hidden">
 
       {/* HEADER */}
 
@@ -97,9 +97,7 @@ export default function Landing() {
           <div className="text-center">
 
             <div className="mb-4">
-
-              <p className="text-sm font-black text-black bg-[#FBBF24] px-3 py-2 rounded-lg inline-block">Developer Guardrails for x402</p>
-
+              <p className="text-sm font-black text-black hover:text-[#FBBF24] transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Developer Guardrails for x402</p>
             </div>
 
             <div className="mb-6">
@@ -134,20 +132,17 @@ export default function Landing() {
         <div className="grid grid-cols-12 gap-6 auto-rows-[180px]">
 
           {/* Why x402 */}
+          <div className="col-span-12 md:col-span-6 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
 
-          <div className="col-span-12 md:col-span-6 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">
-
-            <h2 className="text-xl font-black mb-4 text-black bg-[#FBBF24] px-3 py-2 rounded-lg inline-block">Why x402</h2>
+            <h2 className="text-xl font-black mb-4 text-black hover:text-[#FBBF24] transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Why x402</h2>
 
             <p className="text-sm text-black leading-relaxed">Prevent unexpected costs and abuse with powerful guardrails for x402. Define spend limits to control budgets, set rate limits to prevent API abuse, and configure usage quotas to manage consumption. Protect your application from overuse while maintaining full control over x402 call behavior.</p>
 
           </div>
 
           {/* Key Features */}
-
-          <div className="col-span-12 md:col-span-6 row-span-2 bg-[#FBBF24] border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">
-
-            <h2 className="text-xl font-black mb-4 text-black bg-white px-3 py-2 rounded-lg inline-block">Key Features</h2>
+          <div className="col-span-12 md:col-span-6 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
+            <h2 className="text-xl font-black mb-4 text-black hover:text-[#FBBF24] transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Key Features</h2>
 
             <p className="text-sm text-black mb-4 leading-relaxed">Powerful guardrail capabilities:</p>
 
@@ -168,10 +163,8 @@ export default function Landing() {
           </div>
 
           {/* How It Works */}
-
-          <div className="col-span-12 md:col-span-8 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">
-
-            <h2 className="text-xl font-black mb-4 text-black bg-[#FBBF24] px-3 py-2 rounded-lg inline-block">How It Works</h2>
+          <div className="col-span-12 md:col-span-8 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
+            <h2 className="text-xl font-black mb-4 text-black hover:text-[#FBBF24] transition-colors cursor-default px-3 py-2 rounded-lg inline-block">How It Works</h2>
 
             <p className="text-sm text-black mb-4 leading-relaxed">Set up guardrails in four simple steps:</p>
 
@@ -190,20 +183,16 @@ export default function Landing() {
           </div>
 
           {/* Developer Guardrails */}
-
-          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">
-
-            <h3 className="text-lg font-black mb-2 text-black bg-[#FBBF24] px-3 py-1 rounded-lg inline-block">Developer Guardrails</h3>
+          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
+            <h3 className="text-lg font-black mb-2 text-black hover:text-[#FBBF24] transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Developer Guardrails</h3>
 
             <p className="text-black text-sm mt-2">x402 provides essential guardrails for developers using x402, preventing unexpected costs, API abuse, and overuse through configurable limits and real-time enforcement.</p>
 
           </div>
 
           {/* SDK & API */}
-
-          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">
-
-            <h4 className="text-lg font-bold text-black bg-[#FBBF24] px-3 py-1 rounded-lg inline-block">SDK & API</h4>
+          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
+            <h4 className="text-lg font-bold text-black hover:text-[#FBBF24] transition-colors cursor-default px-3 py-1 rounded-lg inline-block">SDK & API</h4>
 
             <p className="text-black text-sm mt-2 font-bold">Easy-to-use SDKs and REST APIs for defining limits, monitoring usage, and integrating guardrails into your x402-powered applications.</p>
 

@@ -135,11 +135,13 @@ export default function ERC7984Demo() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans tracking-tight">
+    <div className="font-sans tracking-tight">
       {/* Header */}
       <div className="border-b-2 border-black">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-black text-black">Zama-X402</h1>
+          <a href="/home" className="text-2xl font-black text-black hover:text-[#FBBF24] transition-colors cursor-pointer">
+            Zama-X402
+          </a>
           <ConnectButton showBalance={false} />
         </div>
       </div>
@@ -156,14 +158,14 @@ export default function ERC7984Demo() {
         </div>
 
         {!isConnected ? (
-          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl text-center">
             <p className="text-lg font-semibold text-black mb-4">
               Connect your wallet to start testing
             </p>
             <ConnectButton />
           </div>
         ) : !sdkLoaded ? (
-          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl text-center">
             <p className="text-lg font-semibold text-black mb-2">
               Loading SDK...
             </p>
@@ -172,7 +174,7 @@ export default function ERC7984Demo() {
             </p>
           </div>
         ) : isInitializing ? (
-          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl text-center">
             <p className="text-lg font-semibold text-black">
               Initializing FHEVM Instance...
             </p>
@@ -181,7 +183,7 @@ export default function ERC7984Demo() {
             </p>
           </div>
         ) : initError || !fhevmInstance ? (
-          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl text-center">
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-8 rounded-2xl text-center">
             <p className="text-lg font-semibold text-red-600 mb-2">
               FHEVM SDK Initialization Failed
             </p>
@@ -191,7 +193,7 @@ export default function ERC7984Demo() {
             <div className="space-y-2">
               <button
                 onClick={() => window.location.reload()}
-                className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-6 py-3 rounded-lg text-base font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+                className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(255, 191, 36, 0.5)] px-6 py-3 rounded-lg text-base font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(255, 191, 36, 0.7)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
               >
                 Refresh Page
               </button>
@@ -204,7 +206,7 @@ export default function ERC7984Demo() {
         ) : (
           <div className="space-y-6">
             {/* Token Balance Card */}
-            <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-6 rounded-2xl">
+            <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-6 rounded-2xl">
               <h3 className="text-xl font-black text-black mb-4 bg-[#FBBF24] px-3 py-2 rounded-lg inline-block">
                 Token Balance
               </h3>
@@ -232,7 +234,7 @@ export default function ERC7984Demo() {
                     <button
                       onClick={tokenHook.decryptBalanceHandle}
                       disabled={!tokenHook.handle || tokenHook.isDecrypted}
-                      className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-4 py-2 rounded-lg text-sm font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+                      className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(255, 191, 36, 0.5)] px-4 py-2 rounded-lg text-sm font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(255, 191, 36, 0.7)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0_0_rgba(255, 191, 36, 0.5)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
                     >
                       {tokenHook.isDecrypted ? 'Decrypted' : 'Decrypt Balance'}
                     </button>
@@ -246,7 +248,7 @@ export default function ERC7984Demo() {
             </div>
 
             {/* Payment Flow Card */}
-            <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-6 rounded-2xl">
+            <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-6 rounded-2xl">
               <h3 className="text-xl font-black text-black mb-4 bg-[#FBBF24] px-3 py-2 rounded-lg inline-block">
                 x402 Payment Flow
               </h3>
@@ -276,7 +278,7 @@ export default function ERC7984Demo() {
                   <button
                     onClick={handleFetchPremiumData}
                     disabled={!paymentHook.isReady || paymentHook.state === 'transferring' || paymentHook.state === 'verifying'}
-                    className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-6 py-3 rounded-lg text-base font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-[#FBBF24] border-2 border-black shadow-[4px_4px_0_0_rgba(255, 191, 36, 0.5)] px-6 py-3 rounded-lg text-base font-bold text-black hover:bg-[#FCD34D] hover:shadow-[2px_2px_0_0_rgba(255, 191, 36, 0.7)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Fetch Premium Data
                   </button>
@@ -294,7 +296,7 @@ export default function ERC7984Demo() {
             </div>
 
             {/* Info Card */}
-            <div className="bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-6 rounded-2xl">
+            <div className="bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(255, 191, 36, 0.5)] p-6 rounded-2xl">
               <h3 className="text-lg font-black text-black mb-3 bg-[#FBBF24] px-3 py-1 rounded-lg inline-block">
                 Instructions
               </h3>
@@ -314,3 +316,4 @@ export default function ERC7984Demo() {
     </div>
   );
 }
+
