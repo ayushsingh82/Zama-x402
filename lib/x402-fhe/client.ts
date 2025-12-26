@@ -24,6 +24,13 @@ export async function parse402Response(
   }
 
   try {
+    // Check content type before parsing
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('402 response is not JSON:', contentType);
+      return null;
+    }
+
     const data = await response.json();
     if (data.scheme === 'fhe-transfer') {
       return data as FHEPaymentRequirement;
@@ -45,27 +52,59 @@ export async function verifyPayment(
   const facilitatorUrl =
     paymentRequirement.facilitator || FACILITATOR_URL;
 
-  const response = await fetch(`${facilitatorUrl}/verify`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      x402Version: 1,
-      paymentPayload,
-      paymentRequirements: paymentRequirement,
-    }),
-  });
+  try {
+    const response = await fetch(`${facilitatorUrl}/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        x402Version: 1,
+        paymentPayload,
+        paymentRequirements: paymentRequirement,
+      }),
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      let errorMessage = 'Verification failed';
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          errorMessage = errorData.invalidReason || errorData.message || 'Verification failed';
+        } else {
+          // If not JSON, get text and truncate for error message
+          const textResponse = await response.text();
+          errorMessage = `Facilitator error (${response.status}): ${textResponse.substring(0, 100)}...`;
+        }
+      } catch (parseError) {
+        errorMessage = `Facilitator error (${response.status}): Unable to parse response`;
+      }
+
+      return {
+        isValid: false,
+        invalidReason: errorMessage,
+      };
+    }
+
+    // Ensure response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      return {
+        isValid: false,
+        invalidReason: 'Facilitator returned non-JSON response',
+      };
+    }
+
+    const result = await response.json();
+    return result as FHEPaymentVerifyResult;
+  } catch (error) {
+    console.error('Payment verification error:', error);
     return {
       isValid: false,
-      invalidReason: errorData.invalidReason || 'Verification failed',
+      invalidReason: error instanceof Error ? error.message : 'Network error during verification',
     };
   }
-
-  return (await response.json()) as FHEPaymentVerifyResult;
 }
 
 /**

@@ -12,33 +12,33 @@ const faqs = [
 
   {
 
-    q: 'What is x402?',
+    q: 'What is x402 pay-per-use?', 
 
-    a: 'x402 is a developer guardrail system powered by Zama FHE that allows you to define spend limits, rate limits, and usage quotas on x402 calls. It prevents abuse and overuse by enforcing configurable constraints on API usage, helping developers control costs and protect their applications.'
-
-  },
-
-  {
-
-    q: 'How do spend limits work?',
-
-    a: 'Spend limits allow you to set maximum spending thresholds for x402 calls over a specific time period. Once the limit is reached, further calls are blocked until the limit resets. This helps prevent unexpected costs and budget overruns.'
+    a: 'x402 is a pay-per-use payment protocol powered by Zama FHE that charges users based on actual usage - whether that\'s API calls, computations, or resource consumption. Each transaction is processed through FHEVM for privacy while enabling automatic billing.'
 
   },
 
   {
 
-    q: 'What are rate limits?',
+    q: 'How does FHE Wordle work?',
 
-    a: 'Rate limits control the frequency of x402 calls, preventing too many requests in a short time period. You can configure limits like "100 calls per minute" or "1000 calls per hour" to prevent abuse and ensure fair usage across your application.'
+    a: 'FHE Wordle is a privacy-preserving word guessing game where letter comparisons happen on encrypted data. Players can guess words without revealing their guesses to the game server, while still getting feedback on correct letters and positions.'
 
   },
 
   {
 
-    q: 'How are usage quotas enforced?',
+    q: 'What are Confidential Auctions?', 
 
-    a: 'Usage quotas track total consumption over a billing period (daily, weekly, monthly). When a quota is exceeded, x402 calls are automatically blocked. Quotas can be set per API endpoint, user, or application-wide, giving you granular control over usage.'
+    a: 'Confidential auctions use FHE to keep bids encrypted throughout the auction process. This enables blind auctions with sealed bids and Dutch auctions with descending prices, ensuring bid privacy while maintaining fairness and transparency.'
+
+  },
+
+  {
+
+    q: 'How do Token Wrappers work?', 
+
+    a: 'Token wrappers convert standard tokens (ERC20, ETH) into confidential versions using FHE encryption. Users can maintain privacy while trading, with balances and amounts encrypted on-chain but still usable for transactions.'
 
   },
 
@@ -75,7 +75,9 @@ export default function Landing() {
       <div className="absolute top-6 right-6 z-10">
 
         <div className={`connect-button-wrapper border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] rounded-lg cursor-pointer hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 ${
+
           isConnected ? 'bg-white' : 'bg-red-500'
+
         }`}>
 
           <ConnectButton showBalance={false} />
@@ -95,7 +97,9 @@ export default function Landing() {
           <div className="text-center">
 
             <div className="mb-4">
-              <p className="text-sm font-black text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Developer Guardrails for x402</p>
+
+              <p className="text-sm font-black text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Pay-Per-Use Confidential Applications</p>
+
             </div>
 
             <div className="mb-6">
@@ -129,70 +133,111 @@ export default function Landing() {
 
         <div className="grid grid-cols-12 gap-6 auto-rows-[180px]">
 
-          {/* Why x402 */}
+          {/* Privacy Games */}
+
           <div className="col-span-12 md:col-span-6 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
 
-            <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Why x402</h2>
+            <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Privacy Games</h2>
 
-            <p className="text-sm text-black leading-relaxed">Prevent unexpected costs and abuse with powerful guardrails for x402. Define spend limits to control budgets, set rate limits to prevent API abuse, and configure usage quotas to manage consumption. Protect your application from overuse while maintaining full control over x402 call behavior.</p>
-
-          </div>
-
-          {/* Key Features */}
-          <div className="col-span-12 md:col-span-6 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
-            <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Key Features</h2>
-
-            <p className="text-sm text-black mb-4 leading-relaxed">Powerful guardrail capabilities:</p>
+            <p className="text-sm text-black leading-relaxed mb-4">Experience gaming with complete privacy using FHE encryption.</p>
 
             <ul className="space-y-2 text-sm">
 
-              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Spend limits - Control budget and costs</span></li>
+              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">FHE Wordle - Encrypted word guessing</span></li>
 
-              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Rate limits - Prevent API abuse</span></li>
+              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Letter comparisons on encrypted data</span></li>
 
-              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Usage quotas - Manage consumption</span></li>
-
-              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Real-time monitoring & alerts</span></li>
-
-              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">SDK & API integration</span></li>
+              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Fair play without revealing guesses</span></li>
 
             </ul>
 
           </div>
 
-          {/* How It Works */}
+          {/* Confidential Auctions */}
+
+          <div className="col-span-12 md:col-span-6 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
+
+            <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Confidential Auctions</h2>
+
+            <p className="text-sm text-black mb-4 leading-relaxed">Multiple auction implementations with encrypted bids:</p>
+
+            <ul className="space-y-2 text-sm">
+
+              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Blind auctions with sealed bids</span></li>
+
+              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Dutch auctions with descending prices</span></li>
+
+              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Bid privacy throughout process</span></li>
+
+              <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Fair and transparent outcome</span></li>
+
+            </ul>
+
+          </div>
+
+          {/* Token & Wrapper Contracts */}
+
           <div className="col-span-12 md:col-span-8 row-span-2 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
-            <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">How It Works</h2>
 
-            <p className="text-sm text-black mb-4 leading-relaxed">Set up guardrails in four simple steps:</p>
+            <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">Token & Wrapper Contracts</h2>
 
-            <div className="space-y-3">
+            <p className="text-sm text-black mb-4 leading-relaxed">Convert standard tokens into confidential versions:</p>
 
-              <div className="flex items-start"><span className="text-lg font-extrabold text-red-500 mr-3">1</span><div><div className="font-bold text-black mb-1 text-sm">Configure Limits</div><div className="text-xs text-black">Define spend limits, rate limits, and usage quotas through our intuitive interface or SDK.</div></div></div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
 
-              <div className="flex items-start"><span className="text-lg font-extrabold text-red-500 mr-3">2</span><div><div className="font-bold text-black mb-1 text-sm">Integrate SDK</div><div className="text-xs text-black">Add x402 SDK to your application to enforce guardrails on all x402 calls automatically.</div></div></div>
+              <div>
 
-              <div className="flex items-start"><span className="text-lg font-extrabold text-red-500 mr-3">3</span><div><div className="font-bold text-black mb-1 text-sm">Monitor Usage</div><div className="text-xs text-black">Track real-time usage, spending, and rate limit status through the dashboard with detailed analytics.</div></div></div>
+                <h4 className="font-bold text-black mb-2">Token Types:</h4>
 
-              <div className="flex items-start"><span className="text-lg font-extrabold text-red-500 mr-3">4</span><div><div className="font-bold text-black mb-1 text-sm">Automatic Enforcement</div><div className="text-xs text-black">When limits are reached, x402 calls are automatically blocked or throttled to prevent abuse and overuse.</div></div></div>
+                <ul className="space-y-1">
+
+                  <li className="flex items-center"><span className="w-1.5 h-1.5 rounded-full mr-2 bg-red-500"></span><span>Confidential Token Example</span></li>
+
+                  <li className="flex items-center"><span className="w-1.5 h-1.5 rounded-full mr-2 bg-red-500"></span><span>ERC20 Wrapper</span></li>
+
+                  <li className="flex items-center"><span className="w-1.5 h-1.5 rounded-full mr-2 bg-red-500"></span><span>ETH Wrapper</span></li>
+
+                </ul>
+
+              </div>
+
+              <div>
+
+                <h4 className="font-bold text-black mb-2">Features:</h4>
+
+                <ul className="space-y-1">
+
+                  <li className="flex items-center"><span className="w-1.5 h-1.5 rounded-full mr-2 bg-red-500"></span><span>Encrypted balances</span></li>
+
+                  <li className="flex items-center"><span className="w-1.5 h-1.5 rounded-full mr-2 bg-red-500"></span><span>Private transactions</span></li>
+
+                  <li className="flex items-center"><span className="w-1.5 h-1.5 rounded-full mr-2 bg-red-500"></span><span>Faucet Contract</span></li>
+
+                </ul>
+
+              </div>
 
             </div>
 
           </div>
 
-          {/* Developer Guardrails */}
-          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
-            <h3 className="text-lg font-black mb-2 text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Developer Guardrails</h3>
+          {/* Pay-Per-Use Model */}
 
-            <p className="text-black text-sm mt-2">x402 provides essential guardrails for developers using x402, preventing unexpected costs, API abuse, and overuse through configurable limits and real-time enforcement.</p>
+          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
+
+            <h3 className="text-lg font-black mb-2 text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Pay-Per-Use Model</h3>
+
+            <p className="text-black text-sm mt-2">Charge users based on actual usage - API calls, computations, or resource consumption with automatic billing.</p>
 
           </div>
 
-          {/* SDK & API */}
-          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
-            <h4 className="text-lg font-bold text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">SDK & API</h4>
+          {/* Demo Instructions */}
 
-            <p className="text-black text-sm mt-2 font-bold">Easy-to-use SDKs and REST APIs for defining limits, monitoring usage, and integrating guardrails into your x402-powered applications.</p>
+          <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(239, 68, 68, 0.5)] p-8 rounded-2xl flex flex-col justify-center">
+
+            <h4 className="text-lg font-bold text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Try It Now</h4>
+
+            <p className="text-black text-sm mt-2 font-bold">Connect wallet, view encrypted balance, and test the pay-per-use payment flow with premium content access.</p>
 
           </div>
 
@@ -253,4 +298,3 @@ export default function Landing() {
   );
 
 }
-
