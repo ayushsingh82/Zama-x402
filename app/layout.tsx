@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "x402 powered by zama fhe",
-  description: "Developer guardrails for x402 - Define spend limits, rate limits, and usage quotas",
+  description: "Pay-per-use confidential transactions using Fully Homomorphic Encryption (FHE) technology",
 };
 
 export default function RootLayout({

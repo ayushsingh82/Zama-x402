@@ -1,7 +1,5 @@
 # Zama-X402: Pay-Per-Use Confidential DApp
 
-> **Developer Guardrails for x402 - Define spend limits, rate limits, and usage quotas**
-
 Zama-X402 is a cutting-edge decentralized application (dApp) demonstrating pay-per-use confidential transactions using Fully Homomorphic Encryption (FHE) technology. Built on x402 payment protocol and Zama's FHEVM, it enables secure token transfers and payment verification for metered API usage.
 
 ## 🚀 What is Zama-X402?
@@ -10,7 +8,6 @@ Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confi
 
 - **Pay-Per-Use Model**: Charge based on actual usage and resource consumption
 - **Confidential Token Management**: ERC7984 standard with FHE encryption
-- **Developer Guardrails**: Built-in spend limits, rate limits, and usage quotas
 - **Real-time Billing**: Automatic payment processing per API call or transaction
 
 ## ✨ Key Features
@@ -26,12 +23,6 @@ Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confi
 - **Secure Decryption**: Decrypt balance handles using FHEVM technology
 - **Private Transfers**: Execute token transfers while maintaining privacy
 - **ERC7984 Compliance**: Full support for confidential token standard
-
-### 🛡️ **Developer Guardrails**
-- **Spend Limits**: Control maximum spending per user/session/period
-- **Rate Limits**: Prevent API abuse and spam attacks
-- **Usage Quotas**: Manage resource consumption effectively
-- **Real-time Monitoring**: Track usage patterns and spending
 
 ### 🎨 **User Experience**
 - **Intuitive Interface**: Clean, modern design with red theme

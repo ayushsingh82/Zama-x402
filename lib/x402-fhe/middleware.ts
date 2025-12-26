@@ -12,7 +12,6 @@ export function create402Response(
 ): Response {
   return new Response(
     JSON.stringify({
-      scheme: 'fhe-transfer',
       ...requirement,
     }),
     {
