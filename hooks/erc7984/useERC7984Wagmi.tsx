@@ -36,9 +36,10 @@ const ERC7984_ABI = [
 
 interface UseERC7984WagmiProps {
   instance?: any; // FHEVM instance - will be typed properly later
+  hasSignature?: boolean; // Whether user has created decryption signature
 }
 
-export function useERC7984Wagmi({ instance }: UseERC7984WagmiProps = {}) {
+export function useERC7984Wagmi({ instance, hasSignature = false }: UseERC7984WagmiProps = {}) {
   const { address, isConnected } = useAccount();
   const { writeContract, data: hash, isPending } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
@@ -76,6 +77,14 @@ export function useERC7984Wagmi({ instance }: UseERC7984WagmiProps = {}) {
     try {
       setError(null);
       
+      // Check if signature is required and exists
+      if (instance && typeof instance.requiresSignature === 'function') {
+        const requiresSig = await instance.requiresSignature(handle, TOKEN_ADDRESS);
+        if (requiresSig && !hasSignature) {
+          throw new Error('Decryption signature required. Please create signature first.');
+        }
+      }
+      
       // Decrypt using FHEVM instance
       if (instance && typeof instance.decrypt === 'function') {
         const decrypted = await instance.decrypt(handle, TOKEN_ADDRESS);
@@ -93,7 +102,7 @@ export function useERC7984Wagmi({ instance }: UseERC7984WagmiProps = {}) {
       setError(err instanceof Error ? err : new Error('Decryption failed'));
       setIsDecrypted(false);
     }
-  }, [handle, instance, address]);
+  }, [handle, instance, address, hasSignature]);
 
   // Transfer tokens
   const transferTokens = useCallback(

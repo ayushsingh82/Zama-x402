@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
   if (!paymentTxHash) {
     const requirement = getPaymentRequirement(
       '/api/premium-data',
-      '1000000', // 1 token (assuming 6 decimals)
-      'Premium content access',
+      '1000000', // 0.01 tokens (assuming 6 decimals) = 0.01 ETH
+      'Premium content access - 0.01 ETH',
       11155111 // Sepolia
     );
 
