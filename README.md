@@ -2,7 +2,7 @@
 
 Zama-X402 is a cutting-edge decentralized application (dApp) demonstrating pay-per-use confidential transactions using Fully Homomorphic Encryption (FHE) technology. Built on x402 payment protocol and Zama's FHEVM, it enables secure token transfers and payment verification for metered API usage.
 
-## 🚀 What is Zama-X402?
+## What is Zama-X402?
 
 Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confidential Web3 applications. It combines:
 
@@ -10,27 +10,27 @@ Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confi
 - **Confidential Token Management**: ERC7984 standard with FHE encryption
 - **Real-time Billing**: Automatic payment processing per API call or transaction
 
-## ✨ Key Features
+## Key Features
 
-### 💳 **Pay-Per-Use Payment Flow**
+### **Pay-Per-Use Payment Flow**
 - **Metered Billing**: Charge users based on actual usage (API calls, computations, etc.)
 - **Automatic Payments**: Seamless payment processing without user intervention
 - **Usage Tracking**: Monitor and control resource consumption in real-time
 - **Scalable Architecture**: Handle high-volume transactions efficiently
 
-### 🔐 **Confidential Token Operations**
+### **Confidential Token Operations**
 - **Encrypted Balance Viewing**: View token balances without revealing amounts
 - **Secure Decryption**: Decrypt balance handles using FHEVM technology
 - **Private Transfers**: Execute token transfers while maintaining privacy
 - **ERC7984 Compliance**: Full support for confidential token standard
 
-### 🎨 **User Experience**
+### **User Experience**
 - **Intuitive Interface**: Clean, modern design with red theme
 - **Wallet Integration**: Seamless MetaMask and Web3 wallet support
 - **Real-time Updates**: Live transaction status and balance updates
 - **Mobile Responsive**: Works perfectly on all device sizes
 
-## 🔄 How It Works
+## How It Works
 
 ### **Pay-Per-Use Payment Flow**
 
@@ -76,7 +76,7 @@ Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confi
 5. Provide Service / API Response to User
 ```
 
-## 🎯 Use Cases
+## Use Cases
 
 ### **For Developers**
 - **API Monetization**: Charge per API call with privacy
@@ -96,7 +96,7 @@ Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confi
 - **Enterprise APIs**: Charge enterprise clients per request
 - **Microservices**: Pay-per-use architecture implementation
 
-## 🛠️ Technical Architecture
+## Technical Architecture
 
 ### **Frontend Stack**
 - **Next.js 16**: React framework with App Router
@@ -118,7 +118,7 @@ Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confi
 - **Facilitator Service**: Decentralized payment validation
 - **Metered Billing**: Automatic usage tracking and billing
 
-## 📋 Environment Configuration
+## Environment Configuration
 
 Create a `.env.local` file in the root directory with the following variables:
 
@@ -171,7 +171,7 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=0xYourLocalContractAddress
 NEXT_PUBLIC_VERIFIER_ADDRESS=0xYourVerifierAddress
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Prerequisites**
 - Node.js 18+ 
@@ -211,7 +211,7 @@ npm run dev
 5. **Test Pay-Per-Use**: Use "Fetch Premium Data" to trigger x402 pay-per-use flow
 6. **Verify Usage Billing**: Complete payment and see automatic usage billing
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 my-app/
@@ -246,7 +246,7 @@ my-app/
 └── public/              # Static assets
 ```
 
-## 🧪 Development
+## Development
 
 ### **Available Scripts**
 ```bash
@@ -278,7 +278,7 @@ Pay-per-use payment processing:
 - Automatic payment orchestration
 - Facilitator verification
 
-## 🔒 Security Features
+## Security Features
 
 - **Fully Homomorphic Encryption**: All computations on encrypted data
 - **Usage-based Validation**: Payment verification without data exposure
@@ -286,7 +286,7 @@ Pay-per-use payment processing:
 - **Type Safety**: Full TypeScript coverage
 - **Audit Trail**: Usage tracking with privacy protection
 
-## 🌟 Advanced Applications
+## Advanced Applications
 
 ### **Privacy Games**
 - **FHE Wordle**: Privacy-preserving word guessing with encrypted comparisons
@@ -304,7 +304,7 @@ Pay-per-use payment processing:
 - **Billing Dashboard**: Monitor revenue and usage
 - **Privacy SDK**: Easy integration for developers
 
-## 🤝 Contributing
+## Contributing
 
 This is a demonstration project for x402 pay-per-use capabilities. For contributions:
 
@@ -314,7 +314,7 @@ This is a demonstration project for x402 pay-per-use capabilities. For contribut
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open Pull Request
 
-## 📚 Resources
+## Resources
 
 - [x402 Protocol Documentation](https://docs.zama.ai/fhevm)
 - [ERC7984 Standard](https://eips.ethereum.org/EIPS/eip-7984)
@@ -323,12 +323,12 @@ This is a demonstration project for x402 pay-per-use capabilities. For contribut
 - [Wagmi Documentation](https://wagmi.sh)
 - [RainbowKit Documentation](https://www.rainbowkit.com)
 
-## 📄 License
+## License
 
 This project is for demonstration purposes. Smart contracts have individual licensing in the contract directory.
 
 ---
 
-**Built with ❤️ by the Zama-X402 Team**
+**Built by the Zama-X402 Team**
 
 *Empowering pay-per-use confidential applications for the decentralized future*
