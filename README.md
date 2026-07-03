@@ -329,6 +329,4 @@ This project is for demonstration purposes. Smart contracts have individual lice
 
 ---
 
-**Built by the Zama-X402 Team**
-
 *Empowering pay-per-use confidential applications for the decentralized future*
