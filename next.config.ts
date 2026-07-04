@@ -17,7 +17,15 @@ const nextConfig: NextConfig = {
         crypto: false,
       };
     }
-    
+
+    // @zama-fhe/relayer-sdk ships wasm-bindgen output (tfhe/tkms WASM + worker
+    // threads) that needs async WASM support enabled in webpack.
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+      layers: true,
+    };
+
     return config;
   },
   // Empty turbopack config to silence the webpack/turbopack config conflict
