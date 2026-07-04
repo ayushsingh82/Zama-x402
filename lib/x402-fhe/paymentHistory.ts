@@ -55,3 +55,27 @@ export function clearPaymentHistory(): void {
   if (typeof window === 'undefined') return;
   window.localStorage.removeItem(STORAGE_KEY);
 }
+
+/**
+ * Real count of successful (200) protected-resource calls made from this browser, incremented by
+ * the Playground - not an illustrative/fabricated number.
+ */
+const API_CALL_COUNT_KEY = 'zama-x402-api-call-count';
+
+export function getApiCallCount(): number {
+  if (typeof window === 'undefined') return 0;
+  const raw = window.localStorage.getItem(API_CALL_COUNT_KEY);
+  return raw ? parseInt(raw, 10) || 0 : 0;
+}
+
+export function incrementApiCallCount(): number {
+  const next = getApiCallCount() + 1;
+  if (typeof window !== 'undefined') {
+    try {
+      window.localStorage.setItem(API_CALL_COUNT_KEY, String(next));
+    } catch {
+      // localStorage unavailable - count just won't persist
+    }
+  }
+  return next;
+}

@@ -53,7 +53,7 @@ export default function HistoryPage() {
           <p className="text-xs text-black/40 mt-1">Pay for a service on the Dashboard or /test page to see it here.</p>
         </div>
       ) : (
-        <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] rounded-2xl overflow-hidden">
+        <div className="bg-white border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] rounded-2xl overflow-hidden">
           <div className="divide-y-2 divide-black">
             {history.map((entry) => (
               <div key={entry.id} className="px-6 py-5 flex items-start justify-between gap-4">

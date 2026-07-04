@@ -16,7 +16,7 @@ export function AppSidebar() {
     <aside className="w-64 flex-shrink-0 border-r-2 border-black bg-white flex flex-col h-full">
       <div className="p-5 border-b-2 border-black">
         <Link href="/" className="focus:outline-none">
-          <div className="bg-red-500 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-4 py-2 rounded-lg inline-block">
+          <div className="bg-red-300 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-4 py-2 rounded-lg inline-block">
             <p className="text-lg font-black text-black">Zama-X402</p>
           </div>
         </Link>

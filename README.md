@@ -11,11 +11,6 @@ flow with both properties by default:
 - The merchant's address never appears in the 402 response. Payment goes into a shared pool
   gated by a commitment hash, and the server only ever sees that commitment — never a wallet.
 
-Reference/prior art: [ZeroGate](https://github.com/ayushsingh82/ZeroGate) proved this "blind pool"
-pattern on Stellar/Soroban using Groth16 ZK + Merkle commitments. This port keeps the same
-commitment-gated blind-pool shape but runs on Solidity/FHEVM instead, and — unlike ZeroGate, whose
-deposits are plaintext — keeps the payment amount FHE-encrypted throughout.
-
 ## How it works
 
 ```

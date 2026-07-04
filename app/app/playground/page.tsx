@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { getPaymentHistory } from '@/lib/x402-fhe/paymentHistory';
+import { getPaymentHistory, incrementApiCallCount } from '@/lib/x402-fhe/paymentHistory';
 import { SERVICES, type ServiceConfig } from '@/lib/app/services';
 import { PREMIUM_DATA_RESOURCE_ID } from '@/lib/x402-fhe/middleware';
 
@@ -43,6 +43,7 @@ function ServicePanel({ service }: { service: ServiceConfig }) {
       const resp = await fetch(service.endpoint, { headers });
       const data = await resp.json();
       setResult({ status: resp.status, data });
+      if (withCredential && resp.ok) incrementApiCallCount();
     } catch (err) {
       setResult({ status: 0, data: { error: err instanceof Error ? err.message : 'Request failed' } });
     } finally {
@@ -53,7 +54,7 @@ function ServicePanel({ service }: { service: ServiceConfig }) {
   const hasCredential = !!findCredential(service);
 
   return (
-    <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] rounded-2xl p-6">
+    <div className="bg-white border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xs font-black px-2 py-0.5 rounded-full bg-red-500 text-white">{service.scheme}</span>
         <span className="text-xs font-mono text-black/50">GET {service.endpoint}</span>

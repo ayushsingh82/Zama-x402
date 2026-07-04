@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
-import { getPaymentHistory, type PaymentHistoryEntry } from '@/lib/x402-fhe/paymentHistory';
+import { getPaymentHistory, getApiCallCount, type PaymentHistoryEntry } from '@/lib/x402-fhe/paymentHistory';
 import { SERVICES, formatTokenAmount } from '@/lib/app/services';
 
 function StatTile({ label, value, sub }: { label: string; value: string; sub: string }) {
@@ -19,9 +19,11 @@ function StatTile({ label, value, sub }: { label: string; value: string; sub: st
 export default function DashboardPage() {
   const { isConnected } = useAccount();
   const [history, setHistory] = useState<PaymentHistoryEntry[]>([]);
+  const [apiCallCount, setApiCallCount] = useState(0);
 
   useEffect(() => {
     setHistory(getPaymentHistory());
+    setApiCallCount(getApiCallCount());
   }, []);
 
   return (
@@ -41,9 +43,9 @@ export default function DashboardPage() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <StatTile label="Amount" value="Hidden" sub="FHE-encrypted (ERC7984)" />
-        <StatTile label="Merchant" value="Hidden" sub="shielded pool + commitment" />
-        <StatTile label="Total payments" value={String(history.length)} sub="local receipt log" />
+        <StatTile label="Total Services" value={String(SERVICES.length)} sub="in the catalog" />
+        <StatTile label="API Calls" value={String(apiCallCount)} sub="made from this browser" />
+        <StatTile label="Total Payments" value={String(history.length)} sub="local receipt log" />
       </div>
 
       <section>
@@ -52,12 +54,8 @@ export default function DashboardPage() {
           {SERVICES.map((service) => (
             <div
               key={service.id}
-              className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] rounded-2xl p-6 flex flex-col"
+              className="bg-white border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] rounded-2xl p-6 flex flex-col"
             >
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="text-xs font-black px-3 py-1 rounded-full bg-red-500 text-white">Amount hidden</span>
-                <span className="text-xs font-black px-3 py-1 rounded-full bg-black text-white">Merchant hidden</span>
-              </div>
               <h3 className="text-lg font-black text-black mb-2">{service.name}</h3>
               <p className="text-sm text-black/70 mb-4 flex-1">{service.description}</p>
               <div className="grid grid-cols-2 gap-3 text-xs mb-2">
