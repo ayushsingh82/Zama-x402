@@ -13,56 +13,34 @@ const faqs = [
 
     q: 'What is x402 pay-per-use?',
 
-    a: 'x402 is a pay-per-use payment protocol. A protected API route responds with HTTP 402 and payment requirements instead of the resource; the client pays, then re-requests and gets the data. This project implements two variants of that flow on top of Zama\'s FHEVM.'
+    a: 'x402 is a pay-per-use payment protocol. A protected API route responds with HTTP 402 and payment requirements instead of the resource; the client pays, then re-requests and gets the data.'
 
   },
 
   {
 
-    q: 'What is the difference between the two payment schemes?',
+    q: 'Is my payment amount ever visible on-chain?',
 
-    a: 'fhe-transfer is a direct confidential transfer to the merchant\'s address, verified by a facilitator service that decrypts the amount off-chain. fhe-shielded-pool routes payment through a pooled contract instead: the merchant\'s address is never shown to the payer, and the server never sees the payer\'s wallet - only a commitment hash. See the "How It Works" page for the full flow of each.'
-
-  },
-
-  {
-
-    q: 'What does ERC7984 give you that a normal ERC20 doesn\'t?',
-
-    a: 'ERC7984 is a confidential token standard: balances and transfer amounts are encrypted on-chain via FHE. Only the token holder can decrypt their own balance (via a signature-gated FHEVM decryption request) - the amount is never visible on a block explorer.'
+    a: 'No. Every transfer is an ERC7984 confidential transfer - amounts are FHE-encrypted by default, so they\'re never visible to a block explorer or to the merchant\'s server.'
 
   },
 
   {
 
-    q: 'Is the shielded pool fully anonymous?',
+    q: 'Does the merchant learn who paid?',
 
-    a: 'Not yet. Phase 1 hides the merchant\'s payout address and keeps the server blind to the payer\'s wallet, but the depositing wallet itself is still visible on-chain, and the deposited amount isn\'t enforced against the resource\'s price on-chain. Both are documented, scoped Phase 2 items - see "How It Works" for details.'
+    a: 'No. Payment goes into a shared pool gated by a commitment hash, not directly to the merchant. The server only ever sees that commitment when issuing access - never a wallet address - and the merchant claims from the pool\'s aggregate balance separately, decoupled from any single payment.'
 
   },
 
-];
-
-const schemeCards = [
   {
-    title: 'fhe-transfer scheme',
-    subtitle: 'Direct confidential transfer to the merchant, amount always encrypted.',
-    points: [
-      '402 response with merchant payTo address',
-      'ERC7984 confidential transfer, amount hidden',
-      'Facilitator service verifies payment off-chain',
-    ],
+
+    q: 'Is this fully anonymous?',
+
+    a: 'Not yet in every respect. The depositing wallet is still visible on-chain, and the deposited amount isn\'t enforced against the resource\'s price on-chain - both are documented, scoped next steps. See the Docs page for details.'
+
   },
-  {
-    title: 'fhe-shielded-pool scheme',
-    subtitle: 'Phase 1 bidirectional blindness - merchant and payer hidden from each other:',
-    points: [
-      'No merchant address in the 402 response, ever',
-      'Deposit into a shared pool, gated by a commitment hash',
-      'Server never sees a wallet address, only the commitment',
-      'Merchant claims from the aggregate pool balance later',
-    ],
-  },
+
 ];
 
 export default function Landing() {
@@ -79,11 +57,6 @@ export default function Landing() {
 
       <div className="relative pt-32 pb-8 px-4 mb-8 overflow-hidden">
 
-        {/* floating decorative accents */}
-        <div className="hidden md:block absolute top-24 left-[8%] w-16 h-16 bg-red-500 border-2 border-black rounded-2xl rotate-12 animate-float opacity-70" style={{ animationDelay: '0.2s' }} />
-        <div className="hidden md:block absolute top-40 right-[10%] w-10 h-10 bg-black rounded-full animate-float opacity-70" style={{ animationDelay: '1.1s' }} />
-        <div className="hidden md:block absolute bottom-4 left-[18%] w-8 h-8 border-2 border-red-500 rounded-lg animate-float opacity-70" style={{ animationDelay: '0.6s' }} />
-
         <div className="flex items-center justify-center">
 
           <div className="text-center relative z-10">
@@ -96,14 +69,8 @@ export default function Landing() {
 
             <div className="mb-6 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
 
-              <h2 className="text-5xl font-black text-black bg-white px-3 py-2 rounded-lg inline-block italic">
-                x402 powered by{' '}
-                <span
-                  className="animate-gradient-text bg-clip-text text-transparent"
-                  style={{ backgroundImage: 'linear-gradient(90deg, #ef4444, #000000, #ef4444)' }}
-                >
-                  Zama FHE
-                </span>
+              <h2 className="text-5xl font-black text-black bg-white px-3 py-2 rounded-lg inline-block">
+                x402 powered by Zama FHE
               </h2>
 
             </div>
@@ -111,9 +78,9 @@ export default function Landing() {
             <div className="max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.25s' }}>
 
               <p className="text-black font-semibold px-3">
-                A protected API route returns HTTP 402 instead of data. The client pays with an
-                FHE-encrypted ERC7984 transfer, then gets the resource - amount always encrypted,
-                and with the shielded pool scheme, the merchant address hidden too.
+                A protected API route returns HTTP 402 instead of data. The client pays into a
+                shielded pool with an FHE-encrypted ERC7984 transfer, then gets the resource -
+                amount hidden, merchant hidden, always.
               </p>
 
             </div>
@@ -126,67 +93,77 @@ export default function Landing() {
 
       <div className="text-center mb-6 flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.35s' }}>
 
-        <Link href="/test">
-
-          <button className="bg-red-500 border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-8 py-4 rounded-lg text-lg font-bold text-white hover:bg-red-600 hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:scale-[1.03] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px]">Try the Demo</button>
-
-        </Link>
-
         <Link href="/app">
 
           <button className="bg-black border-2 border-black shadow-[6px_6px_0_0_rgba(239,68,68,0.6)] px-8 py-4 rounded-lg text-lg font-bold text-white hover:bg-white hover:text-black hover:shadow-[4px_4px_0_0_rgba(239,68,68,0.6)] hover:translate-x-[2px] hover:translate-y-[2px] hover:scale-[1.03] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(239,68,68,0.6)] active:translate-x-[4px] active:translate-y-[4px]">Open Dashboard</button>
 
         </Link>
 
-        <Link href="/how-it-works">
+        <Link href="/docs">
 
-          <button className="bg-white border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-8 py-4 rounded-lg text-lg font-bold text-black hover:bg-black hover:text-white hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:scale-[1.03] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px]">How It Works</button>
+          <button className="bg-white border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-8 py-4 rounded-lg text-lg font-bold text-black hover:bg-black hover:text-white hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:scale-[1.03] transition-all duration-200 active:shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px]">Docs</button>
 
         </Link>
 
       </div>
 
-      {/* MAIN CONTENT - BENTO GRID */}
+      {/* MAIN CONTENT - SECTIONED */}
 
       <div className="max-w-5xl mx-auto px-4 pb-20 mt-16">
 
-        <div className="grid grid-cols-12 gap-6 auto-rows-[180px]">
+        {/* SECTION: The Guarantee */}
 
-          {schemeCards.map((card, i) => (
+        <section className="py-12">
 
-            <Reveal key={card.title} delayMs={i * 100} className="col-span-12 md:col-span-6 row-span-2">
+          <Reveal>
+            <div className="text-center mb-10">
+              <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2">How It Works</p>
+              <h2 className="text-3xl font-black text-black">Amount Hidden. Merchant Hidden.</h2>
+            </div>
+          </Reveal>
 
-              <div className="h-full bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl flex flex-col justify-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
+          <Reveal>
 
-                <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">{card.title}</h2>
+            <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
 
-                <p className="text-sm text-black leading-relaxed mb-4">{card.subtitle}</p>
+              <ul className="space-y-2 text-sm max-w-xl mx-auto">
 
-                <ul className="space-y-2 text-sm">
+                <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">No merchant address in the 402 response, ever</span></li>
 
-                  {card.points.map((point) => (
-                    <li key={point} className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">{point}</span></li>
-                  ))}
+                <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Every transfer amount FHE-encrypted via ERC7984</span></li>
 
-                </ul>
+                <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Deposit into a shared pool, gated by a commitment hash</span></li>
 
-              </div>
+                <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Server never sees a wallet address, only the commitment</span></li>
 
-            </Reveal>
+                <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Merchant claims from the aggregate pool balance later</span></li>
 
-          ))}
+              </ul>
 
-          {/* ERC7984 confidential token */}
+            </div>
 
-          <Reveal delayMs={200} className="col-span-12 md:col-span-8 row-span-2">
+          </Reveal>
 
-            <div className="h-full bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl flex flex-col justify-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
+        </section>
 
-              <h2 className="text-xl font-black mb-4 text-black hover:text-red-500 transition-colors cursor-default px-3 py-2 rounded-lg inline-block">ERC7984 Confidential Token</h2>
+        {/* SECTION: The Token */}
 
-              <p className="text-sm text-black mb-4 leading-relaxed">The token both payment schemes move value with, backed by Zama&apos;s FHEVM:</p>
+        <section className="py-12 border-t-2 border-black/10">
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+          <Reveal>
+            <div className="text-center mb-10">
+              <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2">The Token</p>
+              <h2 className="text-3xl font-black text-black">ERC7984 Confidential Token</h2>
+            </div>
+          </Reveal>
+
+          <Reveal>
+
+            <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
+
+              <p className="text-sm text-black mb-6 leading-relaxed text-center max-w-2xl mx-auto">The token this payment flow moves value with, backed by Zama&apos;s FHEVM:</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
 
                 <div>
 
@@ -226,43 +203,58 @@ export default function Landing() {
 
           </Reveal>
 
-          {/* Pay-Per-Use Model */}
+        </section>
 
-          <Reveal delayMs={300} className="col-span-12 md:col-span-4 row-span-1">
+        {/* SECTION: Why x402 */}
 
-            <div className="h-full bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl flex flex-col justify-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
+        <section className="py-12 border-t-2 border-black/10">
 
-              <h3 className="text-lg font-black mb-2 text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Pay-Per-Use Model</h3>
-
-              <p className="text-black text-sm mt-2">A protected route returns HTTP 402 with payment requirements instead of data - pay once, then get the resource. No subscriptions, no API keys.</p>
-
+          <Reveal>
+            <div className="text-center mb-10">
+              <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2">Why x402</p>
+              <h2 className="text-3xl font-black text-black">Pay-Per-Use, No Subscriptions</h2>
             </div>
-
           </Reveal>
 
-          {/* Demo Instructions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <Reveal delayMs={400} className="col-span-12 md:col-span-4 row-span-1">
+            <Reveal>
 
-            <div className="h-full bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl flex flex-col justify-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
+              <div className="h-full bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl flex flex-col justify-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
 
-              <h4 className="text-lg font-bold text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Try It Now</h4>
+                <h3 className="text-lg font-black mb-2 text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Pay-Per-Use Model</h3>
 
-              <p className="text-black text-sm mt-2 font-bold">Connect a Sepolia wallet, view your encrypted balance, and test both payment schemes side by side on the /test page.</p>
+                <p className="text-black text-sm mt-2">A protected route returns HTTP 402 with payment requirements instead of data - pay once, then get the resource. No subscriptions, no API keys.</p>
 
-            </div>
+              </div>
 
-          </Reveal>
+            </Reveal>
 
-        </div>
+            <Reveal delayMs={100}>
+
+              <div className="h-full bg-white border-2 border-black border-dashed shadow-[8px_8px_0_0_rgba(239,68,68,0.5)] p-8 rounded-2xl flex flex-col justify-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(239,68,68,0.6)]">
+
+                <h4 className="text-lg font-bold text-black hover:text-red-500 transition-colors cursor-default px-3 py-1 rounded-lg inline-block">Try It Now</h4>
+
+                <p className="text-black text-sm mt-2 font-bold">Connect a Sepolia wallet, view your encrypted balance, and pay for a service through the Dashboard.</p>
+
+              </div>
+
+            </Reveal>
+
+          </div>
+
+        </section>
 
         {/* FAQ SECTION */}
 
         <Reveal>
 
-          <section className="relative z-10 px-4 py-16 border-t border-red-500/20 mt-12">
+          <section className="relative z-10 px-4 py-16 border-t-2 border-black/10">
 
             <div className="max-w-3xl mx-auto">
+
+              <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2 text-center">FAQ</p>
 
               <h2 className="text-3xl text-black font-black mb-8 text-center">Frequently Asked Questions</h2>
 

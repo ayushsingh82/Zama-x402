@@ -4,11 +4,7 @@ import Link from 'next/link';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-import { useAccount } from 'wagmi';
-
 export default function PageHeader() {
-
-  const { isConnected } = useAccount();
 
   return (
 
@@ -30,15 +26,9 @@ export default function PageHeader() {
 
       <div className="absolute top-6 right-6 z-10">
 
-        <div className={`connect-button-wrapper border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] rounded-lg cursor-pointer hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 ${
-            isConnected ? 'bg-white' : 'bg-red-500'
-          }`}>
+        <ConnectButton showBalance={false} />
 
-            <ConnectButton showBalance={false} />
-
-          </div>
-
-        </div>
+      </div>
 
     </>
 

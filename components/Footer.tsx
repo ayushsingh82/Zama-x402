@@ -34,9 +34,9 @@ export default function Footer() {
 
           <div className="flex items-center gap-4">
 
-            <a 
+            <a
 
-              href="https://github.com" 
+              href="https://github.com/ayushsingh82/Zama-x402"
 
               target="_blank" 
 
@@ -56,17 +56,17 @@ export default function Footer() {
 
             </a>
 
-            <a 
+            <a
 
-              href="https://twitter.com" 
+              href="https://x.com/eth_ay32"
 
-              target="_blank" 
+              target="_blank"
 
-              rel="noopener noreferrer" 
+              rel="noopener noreferrer"
 
               className="text-black hover:opacity-70 transition-opacity"
 
-              aria-label="Twitter"
+              aria-label="X (Twitter)"
 
             >
 

@@ -10,26 +10,46 @@ export interface ServiceConfig {
   amountRaw: string;
   /** Header the resource route checks for a completed payment. */
   sessionHeader: 'X-Payment-TxHash' | 'X-Shielded-Session';
+  /** Illustrative quota shown on the card - not separately metered on-chain today. */
+  callsIncluded: number;
 }
 
+/**
+ * Example catalog entries. All three are illustrative use-cases for the same underlying
+ * mechanism - one real protected route (/api/premium-shielded), gated by the same shielded-pool
+ * session check. There's only one resourceId/price on-chain today; these aren't separately
+ * metered services yet.
+ */
 export const SERVICES: ServiceConfig[] = [
   {
     id: 'premium-data',
-    name: 'Premium Data (fhe-transfer)',
-    scheme: 'fhe-transfer',
-    description: 'Direct confidential transfer to the merchant. Amount is FHE-encrypted; merchant address is public.',
-    endpoint: '/api/premium-data',
-    amountRaw: '1000000',
-    sessionHeader: 'X-Payment-TxHash',
-  },
-  {
-    id: 'premium-shielded',
-    name: 'Premium Shielded (fhe-shielded-pool)',
+    name: 'Premium Data API',
     scheme: 'fhe-shielded-pool',
-    description: 'Deposit into a shared pool gated by a commitment hash. Merchant address never appears; server never sees a wallet.',
+    description: 'General premium content access. The provider never learns your wallet or query patterns.',
     endpoint: '/api/premium-shielded',
     amountRaw: '1000000',
     sessionHeader: 'X-Shielded-Session',
+    callsIncluded: 100,
+  },
+  {
+    id: 'analytics-feed',
+    name: 'Analytics Feed',
+    scheme: 'fhe-shielded-pool',
+    description: 'Usage/analytics style data. Your trading or usage queries stay completely private.',
+    endpoint: '/api/premium-shielded',
+    amountRaw: '1000000',
+    sessionHeader: 'X-Shielded-Session',
+    callsIncluded: 500,
+  },
+  {
+    id: 'ai-inference',
+    name: 'AI Inference',
+    scheme: 'fhe-shielded-pool',
+    description: 'Pay-per-call model inference. Submit queries without linking your identity to the content.',
+    endpoint: '/api/premium-shielded',
+    amountRaw: '1000000',
+    sessionHeader: 'X-Shielded-Session',
+    callsIncluded: 50,
   },
 ];
 

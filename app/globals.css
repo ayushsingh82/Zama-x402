@@ -38,51 +38,24 @@ body {
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(2deg);
-  }
-}
-
-@keyframes pulse-shadow {
-  0%, 100% {
-    box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 1);
-  }
-  50% {
-    box-shadow: 10px 10px 0 0 rgba(239, 68, 68, 0.6);
-  }
-}
-
-@keyframes gradient-pan {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 .animate-fade-in-up {
   animation: fade-in-up 0.6s ease-out both;
 }
 
-.animate-float {
-  animation: float 5s ease-in-out infinite;
+@keyframes flow-move {
+  0% {
+    left: 0%;
+  }
+  50% {
+    left: calc(100% - 1.5rem);
+  }
+  100% {
+    left: 0%;
+  }
 }
 
-.animate-pulse-shadow {
-  animation: pulse-shadow 2.4s ease-in-out infinite;
-}
-
-.animate-gradient-text {
-  background-size: 200% 200%;
-  animation: gradient-pan 4s ease-in-out infinite;
+.animate-flow-move {
+  animation: flow-move 3.2s ease-in-out infinite;
 }
 
 .reveal {
@@ -98,9 +71,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
-  .animate-float,
-  .animate-pulse-shadow,
-  .animate-gradient-text {
+  .animate-flow-move {
     animation: none;
   }
   .reveal {
