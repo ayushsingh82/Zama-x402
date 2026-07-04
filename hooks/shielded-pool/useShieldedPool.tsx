@@ -6,6 +6,7 @@ import { readContract, writeContract, waitForTransactionReceipt } from 'wagmi/ac
 import { ERC7984_ABI } from '@/lib/abi/erc7984';
 import { SHIELDED_POOL_ABI } from '@/lib/abi/shieldedPool';
 import { generateCommitmentSecret, computeCommitment, requestShieldedSession } from '@/lib/x402-fhe/shielded-pool';
+import { addPaymentHistoryEntry } from '@/lib/x402-fhe/paymentHistory';
 import type { ShieldedPoolPaymentRequirement, ShieldedPoolState } from '@/lib/x402-fhe/types';
 import type { FhevmAdapter } from '@/hooks/fhevm/useFhevmInstance';
 
@@ -127,6 +128,15 @@ export function useShieldedPool() {
         if (typeof window !== 'undefined') {
           window.sessionStorage.setItem(sessionStorageKey(requirement.resourceId), sessionResult.sessionToken);
         }
+
+        addPaymentHistoryEntry({
+          scheme: 'fhe-shielded-pool',
+          endpoint: requirement.resource,
+          amount: requirement.maxAmountRequired,
+          txHash: depositTxHash,
+          resourceId: requirement.resourceId,
+          commitment,
+        });
 
         setSessionToken(sessionResult.sessionToken);
         setState('success');

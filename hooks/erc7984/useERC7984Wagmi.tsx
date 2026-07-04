@@ -137,6 +137,8 @@ export function useERC7984Wagmi({ instance, hasSignature = false }: UseERC7984Wa
     transferTokens,
     canTransfer,
     isProcessing,
+    transferHash: hash,
+    isTransferConfirmed: isConfirmed,
     tokenAddress: TOKEN_ADDRESS,
   };
 }

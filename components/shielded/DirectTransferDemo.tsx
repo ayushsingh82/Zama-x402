@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useERC7984Wagmi } from '@/hooks/erc7984/useERC7984Wagmi';
 import { useX402Payment } from '@/hooks/x402/useX402Payment';
+import { addPaymentHistoryEntry } from '@/lib/x402-fhe/paymentHistory';
 import type { FHEPaymentRequirement, FHEDecryptionSignature } from '@/lib/x402-fhe/types';
 import type { FhevmAdapter } from '@/hooks/fhevm/useFhevmInstance';
 
@@ -25,6 +26,27 @@ export default function DirectTransferDemo({ fhevmInstance, address }: DirectTra
 
   const tokenHook = useERC7984Wagmi({ instance: fhevmInstance, hasSignature });
   const paymentHook = useX402Payment({ instance: fhevmInstance });
+  const recordedHashRef = useRef<string | null>(null);
+
+  // Records a receipt once the confidential transfer confirms on-chain. Fires once per tx hash -
+  // the underlying transfer isn't awaited by handlePayment below, so this is the only reliable
+  // completion signal available for the history log.
+  useEffect(() => {
+    if (
+      tokenHook.isTransferConfirmed &&
+      tokenHook.transferHash &&
+      recordedHashRef.current !== tokenHook.transferHash &&
+      paymentHook.requirement
+    ) {
+      recordedHashRef.current = tokenHook.transferHash;
+      addPaymentHistoryEntry({
+        scheme: 'fhe-transfer',
+        endpoint: paymentHook.requirement.resource,
+        amount: paymentHook.requirement.maxAmountRequired,
+        txHash: tokenHook.transferHash,
+      });
+    }
+  }, [tokenHook.isTransferConfirmed, tokenHook.transferHash, paymentHook.requirement]);
 
   const createDecryptionSignature = async () => {
     if (!address || !fhevmInstance) return;
