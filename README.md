@@ -76,6 +76,75 @@ Zama-X402 is a comprehensive pay-per-use platform showcasing the future of confi
 5. Provide Service / API Response to User
 ```
 
+## Shielded Pool (`fhe-shielded-pool` scheme)
+
+The original `fhe-transfer` scheme above hides the payment **amount** (via ERC7984), but the merchant's
+payout address is a public config value shown in every 402 response, and the server learns the payer's
+wallet address directly (the decryption-signature payload includes it). The `fhe-shielded-pool` scheme
+is a Phase 1 upgrade that makes merchant and payer blind to **each other**, while coexisting with the
+original scheme (both remain independently usable — see the two tabs in `/test`).
+
+Reference/prior art: [ZeroGate](https://github.com/ayushsingh82/ZeroGate) proved this "blind pool"
+pattern on Stellar/Soroban using Groth16 ZK + Merkle commitments. This port keeps the same
+commitment-gated blind-pool shape but runs on Solidity/FHEVM instead, and — unlike ZeroGate, whose
+deposits are plaintext — keeps the payment amount FHE-encrypted throughout.
+
+### Flow
+
+```
+1. Call protected resource ──▶ HTTP 402 ──▶ { poolAddress, resourceId }   (no merchant address, ever)
+2. Client generates a random secret, computes commitment = hash(secret, resourceId, expiry)
+3. Client grants ShieldedPool operator status on the token (setOperator, like an ERC20 approve)
+4. Client calls ShieldedPool.depositAndRegister(encryptedAmount, proof, commitment, resourceId, expiry)
+     — atomic: deposit into the pool's aggregate confidential balance + commitment registration in one tx
+5. Client POSTs { commitment, resourceId, expiry } to OUR OWN /api/shielded/subscribe
+     — never a third-party facilitator, and never a wallet address
+6. Server RPC-reads ShieldedPool.isCommitmentValid(commitment, resourceId), issues an HMAC session token
+7. Client presents X-Shielded-Session to access the protected resource — server never logs a wallet
+8. Merchant calls ShieldedPool.claim(resourceId, encryptedAmount, proof) whenever, from the pool's
+     aggregate balance — decoupled in time and amount from any specific deposit
+```
+
+### Bidirectional-blindness comparison
+
+| Property | `fhe-transfer` (original) | `fhe-shielded-pool` (Phase 1) |
+|---|---|---|
+| Merchant payout address in 402 response | Visible (`payTo`) | Hidden (only pool address + opaque `resourceId`) |
+| Merchant payout address in payer's transaction | Visible (`to`) | Hidden (`to` = pool, shared by every merchant) |
+| Server learns payer's wallet address | Yes (`decryptionSignature.userAddress`) | No — `/api/shielded/subscribe` never receives one |
+| Payment amount | Encrypted (ERC7984) | Encrypted (ERC7984) — unchanged |
+| Amount verified against resource price | Yes (facilitator decrypts off-chain) | **No — known Phase 1 limitation, see below** |
+| Link between a specific deposit and a specific merchant payout | Direct (1 transfer = 1 payment) | Broken (aggregate pool, merchant withdraws in batches) |
+| Depositing wallet visible to a block explorer | Yes | Yes — **unchanged, Phase 2 scope** |
+
+### Known limitations (Phase 1)
+
+- **On-chain amount is not enforced against the resource's price.** `FHESafeMath.tryDecrease` (used
+  throughout ERC7984) silently caps an insufficient transfer at 0 rather than reverting, so nothing
+  on-chain currently checks that a deposit actually meets a resource's price. This is a real regression
+  versus `fhe-transfer`, which does verify amount today via the facilitator's decryption — traded
+  deliberately for merchant/server blindness. What *is* prevented (see `ShieldedPool.sol` and its test
+  suite's "CRITICAL ANTI-BYPASS CHECK") is registering a commitment with **zero** payment at all:
+  deposit and commitment registration are atomic in a single `depositAndRegister` call, so there is no
+  way to obtain a session token without at least some real, non-zero confidential transfer occurring.
+- **The frontend's FHEVM wiring is real** (`@zama-fhe/relayer-sdk`, via `hooks/fhevm/useFhevmInstance.tsx`)
+  but the full deposit → claim flow has only been verified via real `fhevm.createEncryptedInput()`
+  hardhat tests (`contract/test/ShieldedPool.ts`) and manual `next build`/route-level checks — not yet
+  exercised end-to-end against a live Sepolia deployment with a real wallet. Deploy
+  `contract/ignition/modules/ShieldedPool.ts`, set `NEXT_PUBLIC_SHIELDED_POOL_ADDRESS` and
+  `SHIELDED_SESSION_SECRET`, then run the flow manually through the "Shielded Pool" tab in `/test`.
+
+### Phase 2 (not implemented, deliberately out of scope for now)
+
+- **Depositor anonymity.** Hiding the depositing wallet from a block explorer needs one more layer on
+  top of the pool: either a relayer/paymaster (shared across many users, so the on-chain sender isn't
+  any one payer's real wallet) or a ZK membership proof at claim time (Tornado-Cash-style: prove "I own
+  one of N deposits" without revealing which).
+- **On-chain amount enforcement**, e.g. via Zama's async public-decrypt/disclosure gateway pattern
+  (`FHE.makePubliclyDecryptable` / `requestDiscloseEncryptedAmount`, already present in base
+  `ERC7984.sol`) to publicly disclose an `FHE.ge(transferredAmount, price)` flag without adding a full
+  ZK circuit.
+
 ## Use Cases
 
 ### **For Developers**
@@ -129,9 +198,16 @@ Create a `.env.local` file in the root directory with the following variables:
 NEXT_PUBLIC_TOKEN_ADDRESS=0x803d7ADD44B238F40106B1C4439ecAcd05910dc7
 NEXT_PUBLIC_MERCHANT_ADDRESS=0x3bc07042670a3720c398da4cd688777b0565fd10
 
-# Facilitator Service
+# Facilitator Service (fhe-transfer scheme only)
 NEXT_PUBLIC_FACILITATOR_URL=https://zama-facilitator.ultravioletadao.xyz
 FACILITATOR_URL=https://zama-facilitator.ultravioletadao.xyz
+
+# Shielded Pool (fhe-shielded-pool scheme) — see "Shielded Pool" section above.
+# Deploy contract/ignition/modules/ShieldedPool.ts to get a real pool address.
+NEXT_PUBLIC_SHIELDED_POOL_ADDRESS=0xYourDeployedShieldedPoolAddress
+# Server-only secret used to sign/verify shielded-pool session tokens. Generate your own — never
+# reuse this placeholder in production.
+SHIELDED_SESSION_SECRET=replace-with-a-long-random-secret
 
 # Network Configuration
 NEXT_PUBLIC_CHAIN_ID=11155111
@@ -163,13 +239,17 @@ NEXT_PUBLIC_ENABLE_USAGE_TRACKING=true
 ```env
 # For Local Development
 NEXT_PUBLIC_DEV_MODE=true
-NEXT_PUBLIC_MOCK_FHEVM=true
 NEXT_PUBLIC_SKIP_PAYMENT_VERIFICATION=false
 
 # Contract Addresses (Local)
 NEXT_PUBLIC_CONTRACT_ADDRESS=0xYourLocalContractAddress
 NEXT_PUBLIC_VERIFIER_ADDRESS=0xYourVerifierAddress
 ```
+
+> **Note:** the FHEVM instance is no longer mocked — `hooks/fhevm/useFhevmInstance.tsx` wires up the
+> real `@zama-fhe/relayer-sdk` (via `initSDK()`/`createInstance()`), so `NEXT_PUBLIC_MOCK_FHEVM` no
+> longer does anything and has been removed. Testing the demo requires a real wallet connected to
+> Sepolia with testnet ETH and confidential tokens.
 
 ## Quick Start
 
@@ -215,35 +295,45 @@ npm run dev
 
 ```
 my-app/
-├── app/                    # Next.js App Router
-│   ├── api/               # API routes
-│   │   ├── premium-data/  # Pay-per-use protected endpoints
-│   │   └── facilitator/   # Facilitator integration
-│   ├── test/              # Demo and testing interface
-│   ├── layout.tsx         # Root layout with providers
-│   └── page.tsx           # Landing page
-├── components/            # React components
-│   ├── ERC7984Demo.tsx    # Main demo component
-│   ├── Landing.tsx        # Landing page component
-│   ├── Providers.tsx      # Web3 providers setup
-│   └── ScriptLoader.tsx   # SDK loading
-├── hooks/                 # Custom React hooks
-│   ├── erc7984/          # ERC7984 interactions
-│   └── x402/             # Pay-per-use payment processing
-├── lib/                   # Core utilities
-│   └── x402-fhe/         # x402 FHE payment system
-│       ├── client.ts     # Payment client
-│       ├── middleware.ts # API middleware
-│       └── types.ts      # TypeScript types
-├── contract/             # Smart contracts
-│   ├── contracts/        # Solidity contracts
-│   │   ├── ERC7984.sol   # Confidential token
-│   │   ├── FHEWordle.sol # Privacy game
-│   │   ├── Auction.sol   # Confidential auctions
-│   │   └── Faucet.sol    # Test token distribution
-│   ├── test/            # Contract tests
-│   └── hardhat.config.ts # Hardhat configuration
-└── public/              # Static assets
+├── app/                          # Next.js App Router
+│   ├── api/                     # API routes
+│   │   ├── premium-data/        # fhe-transfer protected endpoint
+│   │   ├── premium-shielded/    # fhe-shielded-pool protected endpoint
+│   │   ├── shielded/subscribe/  # Issues shielded-pool session tokens (our own server, no facilitator)
+│   │   └── facilitator/         # Third-party facilitator integration (fhe-transfer scheme only)
+│   ├── test/                    # Demo and testing interface
+│   ├── layout.tsx                # Root layout with providers
+│   └── page.tsx                  # Landing page
+├── components/                   # React components
+│   ├── ERC7984Demo.tsx           # Thin tab shell (wallet/SDK gating + tab switcher)
+│   ├── shielded/
+│   │   ├── DirectTransferDemo.tsx # fhe-transfer scheme UI (extracted from ERC7984Demo.tsx)
+│   │   └── ShieldedPoolDemo.tsx   # fhe-shielded-pool scheme UI
+│   ├── Landing.tsx                # Landing page component
+│   ├── Providers.tsx              # Web3 providers setup
+│   └── ScriptLoader.tsx           # Inert placeholder (SDK init now lives in useFhevmInstance)
+├── hooks/                         # Custom React hooks
+│   ├── erc7984/                  # ERC7984 interactions
+│   ├── fhevm/useFhevmInstance.tsx # Real @zama-fhe/relayer-sdk wiring (shared by both schemes)
+│   ├── shielded-pool/             # Deposit + commitment + session orchestration
+│   └── x402/                      # fhe-transfer payment processing
+├── lib/                           # Core utilities
+│   ├── abi/                       # Shared ABI fragments (erc7984.ts, shieldedPool.ts)
+│   ├── viem/publicClient.ts        # Server-only read-only RPC client
+│   └── x402-fhe/                  # x402 FHE payment systems
+│       ├── client.ts               # fhe-transfer payment client
+│       ├── shielded-pool.ts        # fhe-shielded-pool client utils (commitment, session request)
+│       ├── shielded-session.ts     # Server-only HMAC session issue/verify
+│       ├── middleware.ts           # 402-response builders for both schemes
+│       └── types.ts                # TypeScript types for both schemes
+├── contract/                      # Smart contracts
+│   ├── contracts/                 # Solidity contracts
+│   │   ├── ERC7984.sol            # Confidential token
+│   │   └── ShieldedPool.sol       # Bidirectional-blindness pool (Phase 1)
+│   ├── ignition/modules/          # Deployment modules (Lock.ts, ShieldedPool.ts)
+│   ├── test/                      # Contract tests (ERC7984.ts, ShieldedPool.ts)
+│   └── hardhat.config.ts          # Hardhat configuration
+└── public/                        # Static assets
 ```
 
 ## Development
