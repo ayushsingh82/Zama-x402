@@ -3,36 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { formatUnits, parseUnits } from 'viem';
+import { ERC7984_ABI } from '@/lib/abi/erc7984';
 const TOKEN_ADDRESS = (process.env.NEXT_PUBLIC_TOKEN_ADDRESS || '0x803d7ADD44B238F40106B1C4439ecAcd05910dc7') as `0x${string}`;
-
-// ERC7984 ABI (simplified)
-const ERC7984_ABI = [
-  {
-    name: 'confidentialBalanceOf',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [{ name: 'account', type: 'address' }],
-    outputs: [{ name: '', type: 'bytes32' }],
-  },
-  {
-    name: 'confidentialTransfer',
-    type: 'function',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'to', type: 'address' },
-      { name: 'encryptedAmount', type: 'bytes32' },
-      { name: 'proof', type: 'bytes' },
-    ],
-    outputs: [],
-  },
-  {
-    name: 'decryptBalance',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [{ name: 'handle', type: 'bytes32' }],
-    outputs: [{ name: '', type: 'uint64' }],
-  },
-] as const;
 
 interface UseERC7984WagmiProps {
   instance?: any; // FHEVM instance - will be typed properly later
